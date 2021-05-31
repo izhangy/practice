@@ -44,7 +44,7 @@ public class StreamSort {
                 b -> {
                         BeanObj obj = new BeanObj();
                         BeanUtils.copyProperties(b, obj);
-                        if (StringUtils.isNotBlank(b.getActPrio())) {
+                        if (StringUtils.isNotBlank(b.getActPrio())) {//actPrio为空时，做处理
                             Integer priority;
                             try {
                                 priority = Integer.parseInt(b.getActPrio());
