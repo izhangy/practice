@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -27,7 +28,9 @@ public class StreamSort {
         BeanObj obj5 = new BeanObj();
         obj5.setActPrio("122");
         BeanObj obj6 = new BeanObj();
-        obj6.setActPrio("10");
+        obj6.setActPrio("");
+        BeanObj obj7 = new BeanObj();
+        obj7.setActPrio("10");
         List<BeanObj> list = new ArrayList<>();
         list.add(obj1);
         list.add(obj2);
@@ -35,26 +38,27 @@ public class StreamSort {
         list.add(obj4);
         list.add(obj5);
         list.add(obj6);
+        list.add(obj7);
         List<BeanObj> objsList = new ArrayList<>();
         list.stream().filter(Objects::nonNull).forEach(
                 b -> {
-                    try {
                         BeanObj obj = new BeanObj();
                         BeanUtils.copyProperties(b, obj);
-                        if (b.getActPrio() != null) {
+                        if (StringUtils.isNotBlank(b.getActPrio())) {
                             Integer priority;
-                            priority = Integer.parseInt(b.getActPrio());
+                            try {
+                                priority = Integer.parseInt(b.getActPrio());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                priority=null;
+                            }
                             obj.setPriority(priority);
                         }
                         objsList.add(obj);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
         );
        List<BeanObj> beanObjList  = objsList.stream().sorted(Comparator.comparing(BeanObj::getPriority,
                Comparator.nullsFirst(Integer::compareTo).reversed())).collect(Collectors.toList());
-        System.out.println(JSONObject.toJSONString(beanObjList));
-
+        System.out.println(beanObjList);
     }
 }
