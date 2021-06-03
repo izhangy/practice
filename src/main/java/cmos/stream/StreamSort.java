@@ -1,9 +1,7 @@
 package cmos.stream;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.text.DateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
@@ -40,6 +38,7 @@ public class StreamSort {
         list.add(obj6);
         list.add(obj7);
         List<BeanObj> objsList = new ArrayList<>();
+        Long forBegin = System.currentTimeMillis();
         list.stream().filter(Objects::nonNull).forEach(
                 b -> {
                         BeanObj obj = new BeanObj();
@@ -57,8 +56,11 @@ public class StreamSort {
                         objsList.add(obj);
                 }
         );
+        Long streamTime = System.currentTimeMillis();
        List<BeanObj> beanObjList  = objsList.stream().sorted(Comparator.comparing(BeanObj::getPriority,
                Comparator.nullsFirst(Integer::compareTo).reversed())).collect(Collectors.toList());
         System.out.println(beanObjList);
+        Long time = streamTime-forBegin;
+        System.out.println("shijianjiange" + time);
     }
 }
