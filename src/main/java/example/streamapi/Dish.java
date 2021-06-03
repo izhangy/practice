@@ -1,6 +1,4 @@
-package cmos.streamapi;
-
-import java.lang.reflect.Type;
+package example.streamapi;
 
 /**
  * @author When all else is lost the future still remains.

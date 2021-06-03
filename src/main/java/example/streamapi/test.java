@@ -1,4 +1,4 @@
-package cmos.streamapi;
+package example.streamapi;
 
 import java.util.ArrayList;
 import java.util.Arrays;

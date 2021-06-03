@@ -1,4 +1,4 @@
-package cmos.stream;
+package example.stream;
 
 /**
  * @author When all else is lost the future still remains.
