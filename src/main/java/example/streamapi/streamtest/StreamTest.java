@@ -1,10 +1,10 @@
 package example.streamapi.streamtest;
 
+import com.alibaba.fastjson.JSONObject;
+
+import javax.management.RuntimeMBeanException;
 import javax.swing.text.html.Option;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -19,12 +19,12 @@ public class StreamTest {
         Trader brian = new Trader("Brian", "Cambridge");
 
         List<Transaction> transactions = Arrays.asList(
-                new Transaction(brian, 2011, 300),
-                new Transaction(raoul, 2012, 1000),
-                new Transaction(raoul, 2011, 400),
-                new Transaction(mario, 2012, 710),
-                new Transaction(mario, 2012, 700),
-                new Transaction(alan, 2012, 950)
+                new Transaction(brian, 2011, 300, Currency.getInstance(Locale.CHINA)),
+                new Transaction(raoul, 2012, 1000, Currency.getInstance(Locale.CANADA)),
+                new Transaction(raoul, 2011, 400, Currency.getInstance(Locale.US)),
+                new Transaction(mario, 2012, 710, Currency.getInstance(Locale.KOREA)),
+                new Transaction(mario, 2012, 700, Currency.getInstance(Locale.CHINA)),
+                new Transaction(alan, 2012, 950, Currency.getInstance(Locale.UK))
         );
         List<Transaction> tr2011 = transactions.stream().filter(transaction -> transaction.getYear() == 2011)
                 .sorted(Comparator.comparing(Transaction::getValue))
@@ -78,6 +78,26 @@ public class StreamTest {
         Optional<Transaction> minTransaction = transactions.stream()
                 .min(Comparator.comparing(Transaction::getValue));
         System.out.println(minTransaction);
+
+
+        Map<Currency, List<Transaction>> transactionsByCurrencies = new HashMap<>();
+        for (Transaction transaction : transactions) {
+            Currency currency = transaction.getCurrency();
+            List<Transaction> transactionsForCurrency = transactionsByCurrencies.get(currency);
+            if (transactionsForCurrency == null) {
+                transactionsForCurrency = new ArrayList<>();
+                transactionsByCurrencies.put(currency, transactionsForCurrency);
+            }
+            transactionsForCurrency.add(transaction);
+            System.out.println(JSONObject.toJSONString(transactionsForCurrency));
+        }
+
+        //Collectors工厂
+        //groupingBy将具有相同币种的交易额进行分组
+        Map<Currency, List<Transaction>> transactionByCurrencies = transactions.stream()
+                .collect(Collectors.groupingBy(Transaction::getCurrency));
+        System.out.println(JSONObject.toJSONString(transactionByCurrencies));
+
 
 
     }

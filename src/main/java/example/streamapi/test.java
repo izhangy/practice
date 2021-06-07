@@ -150,6 +150,44 @@ public class test {
                 .filter(t -> t[2] % 1 == 0));
         pythagoreanTriples2.limit(5).forEach(t -> System.out.println(t[0] + "," + t[1] + "," + t[2]));
 
+        //Collectors工厂
+        //计算有多少种菜
+        long howManyDishes = menu.stream().collect(Collectors.counting());
+        System.out.println(howManyDishes);
+
+        //查找流中的最大和最小值
+        //Collectors.maxBy   Collectors.minBy
+        Comparator<Dish> dishCaloriesComparator = Comparator.comparingInt(Dish::getCalories);
+        Optional<Dish> mostCaloriesDish = menu.stream().collect(Collectors.maxBy(dishCaloriesComparator));
+        System.out.println(mostCaloriesDish);
+
+        //Collectors.summingInt  //把对象求和，并返回一个收集器
+        //Collectors.averagingInt、Collectors.averagingLong、Collectors.averagingDouble求平均
+        //Collectors.summarizingInt一次操作，可以返回所有的总和、平均值、最大值和最小值。
+        IntSummaryStatistics menuStatistics = menu.stream().collect(Collectors.summarizingInt(Dish::getCalories));
+        System.out.println(menuStatistics);
+
+        //joining工厂返回对每一个对象应用toString方法得到的所有字符串连接成一个字符串
+        String shortMenu = menu.stream().map(Dish::getName).collect(Collectors.joining());
+        System.out.println(shortMenu);
+        //joining方法可以重载版本接收元素之间的分界符
+        String shortMenu1 = menu.stream().map(Dish::getName).collect(Collectors.joining(", "));
+        System.out.println(shortMenu1);
+
+        //计算热量总量
+        //Collectors.reducing包含三个参数：1.归约的起始值。2.将菜肴转换成一个表示其所含热量的int。3.将两个项目累计成同一个类的值
+        int totalCalories = menu.stream().collect(Collectors.reducing(0,Dish::getCalories, (i, j) -> i + j));
+        System.out.println(totalCalories);
+
+        int totalCalor = menu.stream().collect(Collectors.reducing(0, Dish::getCalories, Integer::sum));
+        System.out.println(totalCalor);
+
+
+
+
+
+
+
 
 
 
