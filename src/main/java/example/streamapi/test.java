@@ -1,6 +1,8 @@
 package example.streamapi;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sun.deploy.uitoolkit.ui.DialogHook;
+import example.streamapi.streamtest.CaloricLevel;
 
 import javax.swing.*;
 import java.util.*;
@@ -182,15 +184,41 @@ public class test {
         int totalCalor = menu.stream().collect(Collectors.reducing(0, Dish::getCalories, Integer::sum));
         System.out.println(totalCalor);
 
+        //分组；按食物类型进行分组
+        Map<Dish.Type, List<Dish>> dishesByType = menu.stream().collect(Collectors.groupingBy(Dish::getType));
+        System.out.println(JSONObject.toJSONString(dishesByType));
 
+        //各种食物热量最高的食物,先分组后筛选最大热量值
+        Map<Dish.Type, Optional<Dish>> mostCaloricByType = menu.stream()
+                .collect(Collectors.groupingBy(Dish::getType, Collectors.maxBy(Comparator.comparingInt(Dish::getCalories))));
+        System.out.println(mostCaloricByType);
 
+        //把收集器的结果转换为另一种类型
+        Map<Dish.Type, Dish> mostCaloric = menu.stream()
+                .collect(Collectors.groupingBy(Dish::getType, Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparingInt(Dish::getCalories)),
+                        Optional::get)));
+        System.out.println(mostCaloric);
 
+        //与mapping联合使用
+        Map<Dish.Type, Set<CaloricLevel>> caloricLevelsByType = menu.stream()
+                .collect(Collectors.groupingBy(Dish::getType,
+                        Collectors.mapping(dish -> {
+                            if (dish.getCalories() <= 400) return CaloricLevel.DIET;
+                            else if (dish.getCalories() <= 700) return CaloricLevel.NORMAL;
+                            else return CaloricLevel.FAT; }, Collectors.toSet())));
+        System.out.println(caloricLevelsByType);
 
-
-
-
-
-
-
+        //分区
+        //找到素食和非素食中热量高的食物
+        long start = System.currentTimeMillis();
+        long startTime = System.nanoTime();
+        Map<Boolean, Dish> mostCaloricPartitionedByVegetarian = menu.stream()
+                .collect(Collectors.partitioningBy(Dish::isVegetarian,
+                        Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparingInt(Dish::getCalories)),
+                                Optional::get)));
+        long duration = System.currentTimeMillis();
+        long endTime = System.nanoTime();
+        System.out.println("result: " + (duration-start));
+        System.out.println(mostCaloricPartitionedByVegetarian);
     }
 }

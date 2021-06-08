@@ -36,7 +36,6 @@ public class StreamSort {
         list.add(obj6);
         list.add(obj7);
         List<BeanObj> objsList = new ArrayList<>();
-        Long forBegin = System.currentTimeMillis();
         list.stream().filter(Objects::nonNull).forEach(
                 b -> {
                         BeanObj obj = new BeanObj();
@@ -56,9 +55,12 @@ public class StreamSort {
         );
         Long streamTime = System.currentTimeMillis();
        List<BeanObj> beanObjList  = objsList.stream().sorted(Comparator.comparing(BeanObj::getPriority,
-               Comparator.nullsFirst(Integer::compareTo).reversed())).collect(Collectors.toList());
+               Comparator.nullsFirst(Integer::compareTo).reversed()))
+               .parallel()
+               .collect(Collectors.toList());
         System.out.println(beanObjList);
-        Long time = streamTime-forBegin;
-        System.out.println("shijianjiange" + time);
+        Long forBegin = System.currentTimeMillis();
+        Long time = forBegin-streamTime;
+        System.out.println("shijianjiange：" + time);
     }
 }
