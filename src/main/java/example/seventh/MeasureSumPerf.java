@@ -6,7 +6,7 @@ import java.util.function.Function;
  * @author When all else is lost the future still remains.
  * @date 2021/6/7 - 15:38
  **/
-public class measureSumPerf {
+public class MeasureSumPerf {
     public long measureSumPerf(Function<Long, Long> adder, long n){
         long fastest = Long.MAX_VALUE;
         for (int i = 0; i < 10; i++) {
